@@ -1,0 +1,63 @@
+---
+title: "Exoplanets"
+author: "Thomas Mauran"
+date: "2023-04-26"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Load data
+
+```{r}
+library(here)
+library(ggplot2)
+library(dplyr)
+library(treemapify)
+
+data <- read.csv(file = here("data.csv"))
+colnames(data)
+```
+
+### Nombre de planètes découvertes par année et méthode de découvertes
+
+```{r, out.width="100%"}
+# Sous tableau
+subset_year_type <- subset(data, select = c("Discovery.Year", "Discovery.Method"))
+
+# Ajout de fréquences
+year_method_frequency <- table(subset_year_type$Discovery.Year, subset_year_type$Discovery.Method)
+
+# Conversion en data frame
+year_method_frequency_df <- data.frame(Year = as.integer(rownames(year_method_frequency)),
+                                      Method = colnames(year_method_frequency),
+                                      Frequency = as.vector(year_method_frequency))
+
+# Gaphique
+ggplot(year_method_frequency_df, aes(x = Year, y = Frequency, fill = Method)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Nombre d'exoplanètes découvertes par année et par méthode",
+       x = "Année",
+       y = "Fréquence",
+       fill = "Méthode de découverte")
+```
+
+### **Quels sont les observatoires qui découvrent le plus d\'exoplanètes ?**
+
+```{r, out.width="100%"}
+# Sous tableau
+subset_observatoire <- subset(data, select = c("Discovery.Facility"))
+# Ajout de fréquences
+observatoire_frequency <- table(subset_observatoire$Discovery.Facility)
+# Conversion en data frame
+year_method_frequency_df <- data.frame(Observatoire = rownames(observatoire_frequency),
+                                      Frequency = as.vector(observatoire_frequency))
+# Create treemap chart
+ggplot(year_method_frequency_df, aes(area = Frequency, fill = Frequency, label = Observatoire)) +
+  geom_treemap() +
+  labs(title = "Nombre d'exoplanètes découvertes par observatoire",
+       fill = "Observatoire") +
+  geom_treemap_text(place = "centre", size = 10, color = "white", na.rm = TRUE) 
+```
