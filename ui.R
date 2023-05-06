@@ -16,6 +16,7 @@ data <- read.csv("https://raw.githubusercontent.com/thomas-mauran/Exoplanets-R-v
 
 # CHART 1
 chart1 <- fluidRow(
+  h1("Nombre d'éxoplanètes découvertes par année et méthode de découvertes"),
   box(plotOutput("plot1"), width = 12),
   box(
     title = "Controls",
@@ -34,7 +35,7 @@ chart1 <- fluidRow(
           "method",
           label = h3("Discovery Method"),
           choices = sort(unique(data$Discovery.Method)),
-          selected = unique(data$Discovery.Method),
+          selected = sort(unique(data$Discovery.Method)),
         ),
         style = "margin: 0px 20px;"
       ),
@@ -43,6 +44,33 @@ chart1 <- fluidRow(
     width = 12
   ),
 )
+
+# CHART 2
+chart2 <- fluidRow(
+  h1("Quels sont les observatoires qui découvrent le plus d'exoplanètes ?"),
+  box(
+    title = "Controls",
+    sliderInput(
+      "slider2",
+      label = h3("Discover year range"),
+      min = 1985,
+      max = 2023,
+      value = c(1985, 2023),
+      sep = "",
+      animate = TRUE
+    ),
+    checkboxGroupInput(
+      "method",
+      label = h3("Discovery Method"),
+      choices = sort(unique(data$Discovery.Method)),
+      selected = sort(unique(data$Discovery.Method)),
+    ),
+    cellWidths = c("30%", "70%"),
+  ),
+  box(plotOutput("plot2")),
+)
+
+
 
 # SIDEBAR
 sidebar <- dashboardSidebar(
@@ -61,7 +89,7 @@ body <- dashboardBody(
             chart1
     ),
     tabItem(tabName = "chart2",
-            h2("chart2")
+            chart2
     )
   )
 )

@@ -21,6 +21,7 @@ function(input, output, session) {
   output$plot1 <- renderPlot({
     # Sous tableau
     subset_year_type <- subset(data, Discovery.Method %in% input$method)
+    print(input$method)
     # Ajout de fréquences
     year_method_frequency <- table(subset_year_type$Discovery.Year, subset_year_type$Discovery.Method)
     
@@ -30,7 +31,7 @@ function(input, output, session) {
                                            Frequency = as.vector(year_method_frequency))
     # Colors 
     # Generate a rainbow color palette with 11 colors
-    col_pal <- c("strometry" = "#BEBADA",
+    col_pal <- c("Astrometry" = "#BEBADA",
                  "Disk Kinematics" = "#8DD3C7",
                  "Eclipse Timing Variations" = "#80B1D3",
                  "Imaging" = "#FDB462",
@@ -46,12 +47,28 @@ function(input, output, session) {
     # Gaphique
     ggplot(year_method_frequency_df, aes(x = Year, y = Frequency, fill = Method)) +
       geom_bar(stat = "identity") +
-      scale_fill_manual(values = col_pal) +
       labs(title = "Nombre d'exoplanètes découvertes par année et par méthode",
            x = "Année",
            y = "Fréquence",
            fill = "Méthode de découverte") +
       scale_x_continuous(breaks = seq(1985, 2023, 5)) +
     coord_cartesian(xlim = input$slider2)
+  })
+  
+  
+  output$plot2 <- renderPlot({
+    # Sous tableau
+    subset_observatoire <- subset(data, select = c("Discovery.Facility"))
+    # Ajout de fréquences
+    observatoire_frequency <- table(subset_observatoire$Discovery.Facility)
+    # Conversion en data frame
+    year_method_frequency_df <- data.frame(Observatoire = rownames(observatoire_frequency),
+                                           Frequency = as.vector(observatoire_frequency))
+    # Create treemap chart
+    ggplot(year_method_frequency_df, aes(area = Frequency, fill = Frequency, label = Observatoire)) +
+      geom_treemap() +
+      labs(title = "Nombre d'exoplanètes découvertes par observatoire",
+           fill = "Nombre d'exoplanètes") +
+      geom_treemap_text(place = "centre", size = 10, color = "white", na.rm = TRUE) 
   })
 }
