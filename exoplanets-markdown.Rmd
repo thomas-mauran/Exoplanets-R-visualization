@@ -12,12 +12,11 @@ knitr::opts_chunk$set(echo = TRUE)
 ### Load data
 
 ```{r}
-library(here)
 library(ggplot2)
 library(dplyr)
 library(treemapify)
 
-data <- read.csv(file = here("data.csv"))
+data <- read.csv("https://raw.githubusercontent.com/thomas-mauran/Exoplanets-R-visualization/main/data.csv")
 colnames(data)
 ```
 
@@ -89,7 +88,7 @@ subset_3 <- subset(data, select = c("Discovery.Year", "Distance", "Discovery.Met
 subset_3 <- subset_3[complete.cases(subset_3),]
 subset_3
 ggplot(subset_3, aes(x = Discovery.Year, y = Distance, color = Discovery.Method)) + 
-  geom_point() +
+  geom_boxplot() +
   geom_smooth(method = "lm", se = FALSE) +
   scale_color_discrete(name = "Discovery Method") +
   labs(x = "Discovery Year", y = "Distance Year")
