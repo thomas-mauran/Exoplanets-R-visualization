@@ -44,9 +44,10 @@ ggplot(year_method_frequency_df, aes(x = Year, y = Frequency, fill = Method)) +
        fill = "Méthode de découverte")
 ```
 
-### **Quels sont les observatoires qui découvrent le plus d\'exoplanètes ?**
+### **Quels sont les observatoires qui découvrent le plus d'exoplanètes ?**
 
 ```{r, out.width="100%"}
+
 # Sous tableau
 subset_observatoire <- subset(data, select = c("Discovery.Facility"))
 # Ajout de fréquences
@@ -58,6 +59,39 @@ year_method_frequency_df <- data.frame(Observatoire = rownames(observatoire_freq
 ggplot(year_method_frequency_df, aes(area = Frequency, fill = Frequency, label = Observatoire)) +
   geom_treemap() +
   labs(title = "Nombre d'exoplanètes découvertes par observatoire",
-       fill = "Observatoire") +
+       fill = "Nombre d'exoplanètes") +
   geom_treemap_text(place = "centre", size = 10, color = "white", na.rm = TRUE) 
+
+
+```
+
+### **Y a-t-il un lien entre la masse stélaire et le rayon des exoplanètes?**
+
+```{r, out.width="100%"}
+
+# Subset data and remove rows with null values
+subset_3 <- subset(data, select = c("Stellar.Mass", "Equilibrium.Temperature", "Eccentricity"))
+subset_3 <- subset_3[complete.cases(subset_3),]
+
+ggplot(subset_3, aes(x = Stellar.Mass, y = Equilibrium.Temperature, color = Eccentricity)) + 
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  scale_color_continuous(name = "Stellar Metallicity Ratio") +
+  labs(x = "Mass", y = "Equilibrium Temperature")
+
+
+```
+
+```{r, out.width="100%"}
+
+# Subset data and remove rows with null values
+subset_3 <- subset(data, select = c("Discovery.Year", "Distance", "Discovery.Method"))
+subset_3 <- subset_3[complete.cases(subset_3),]
+subset_3
+ggplot(subset_3, aes(x = Discovery.Year, y = Distance, color = Discovery.Method)) + 
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  scale_color_discrete(name = "Discovery Method") +
+  labs(x = "Discovery Year", y = "Distance Year")
+
 ```
