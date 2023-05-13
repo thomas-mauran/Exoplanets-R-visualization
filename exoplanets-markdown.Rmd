@@ -12,11 +12,12 @@ knitr::opts_chunk$set(echo = TRUE)
 ### Load data
 
 ```{r}
+library(here)
 library(ggplot2)
 library(dplyr)
 library(treemapify)
 
-data <- read.csv("https://raw.githubusercontent.com/thomas-mauran/Exoplanets-R-visualization/main/data.csv")
+data <- read.csv(file = here("data.csv"))
 colnames(data)
 ```
 
@@ -69,17 +70,19 @@ ggplot(year_method_frequency_df, aes(area = Frequency, fill = Frequency, label =
 ```{r, out.width="100%"}
 
 # Subset data and remove rows with null values
-subset_3 <- subset(data, select = c("Stellar.Mass", "Equilibrium.Temperature", "Eccentricity"))
+data
+subset_3 <- subset(data, select = c("Stellar.Mass", "Equilibrium.Temperature", "Stellar.Surface.Gravity"))
 subset_3 <- subset_3[complete.cases(subset_3),]
-
-ggplot(subset_3, aes(x = Stellar.Mass, y = Equilibrium.Temperature, color = Eccentricity)) + 
+subset_3
+ggplot(subset_3, aes(x = Stellar.Mass, y = Equilibrium.Temperature, color = Stellar.Surface.Gravity)) + 
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
-  scale_color_continuous(name = "Stellar Metallicity Ratio") +
-  labs(x = "Mass", y = "Equilibrium Temperature")
+   labs(x = "Mass", y = "Equilibrium Temperature")
 
 
 ```
+
+### Quelle est la relation entre l'année de découverte et la distance des exoplanètes, et comment varie-t-elle en fonction de la méthode de découverte utilisée ?
 
 ```{r, out.width="100%"}
 
@@ -88,9 +91,8 @@ subset_3 <- subset(data, select = c("Discovery.Year", "Distance", "Discovery.Met
 subset_3 <- subset_3[complete.cases(subset_3),]
 subset_3
 ggplot(subset_3, aes(x = Discovery.Year, y = Distance, color = Discovery.Method)) + 
-  geom_boxplot() +
-  geom_smooth(method = "lm", se = FALSE) +
+  geom_point() +
   scale_color_discrete(name = "Discovery Method") +
-  labs(x = "Discovery Year", y = "Distance Year")
+  labs(x = "Discovery Year", y = "Distance")
 
 ```
