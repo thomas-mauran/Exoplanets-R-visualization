@@ -9,7 +9,19 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-### Load data
+# Exoplanet dataviz {#sec-tp-1 style="text-align: center"}
+
+::: {align="center"}
+<img src="images/exoplanet.png" alt="thumbnail" width="453"/>
+:::
+
+## Les données
+
+Mon jeu de donnée provient du site [kaggle](%22https://www.kaggle.com/datasets/shivamb/all-exoplanets-dataset%22) il est composé de 4575 lignes. Il contient des informations sur des exoplanètes, comme leur nom, la méthode utilisée pour les découvrir, l'année de leur découverte, etc. On y trouve également des détails sur les étoiles elles-mêmes, comme leur température, leur taille, leur masse, etc.\
+
+J'ai choisi de prendre ce dataset car l'espace est un sujet qui me passionne et qu'il semblait avoir assez de données pour être pertinent.
+
+##### Load des données
 
 ```{r}
 library(here)
@@ -18,10 +30,30 @@ library(dplyr)
 library(treemapify)
 
 data <- read.csv(file = here("data.csv"))
-colnames(data)
+
 ```
 
-### Nombre de planètes découvertes par année et méthode de découvertes
+### Combien de planètes ont été découvertes chaque année et quelles méthodes ont été utilisées pour les découvrir ?
+
+**Population:** L'ensemble des exoplanètes de l'univers
+
+**Echantillon:** Les 4575 exoplanètes presentes dans le dataset
+
+**Variable:**
+
+-   Le nombre d'éxoplanètes découvertes
+
+-   Leurs année de découvertes
+
+-   Leurs méthode de découvertes
+
+**Modalités**
+
+-   Le nombre de planète découvertes =\> nombre entre 0 et **≈** 1600
+
+-   année de découverte =\> Nombre entre 1989 et 2021
+
+-   Méthode =\> variable qualitative, méthode de découverte
 
 ```{r, out.width="100%"}
 # Sous tableau
@@ -41,10 +73,67 @@ ggplot(year_method_frequency_df, aes(x = Year, y = Frequency, fill = Method)) +
   labs(title = "Nombre d'exoplanètes découvertes par année et par méthode",
        x = "Année",
        y = "Fréquence",
-       fill = "Méthode de découverte")
+       fill = "Méthode de découverte") +
+  scale_x_continuous(breaks = seq(min(year_method_frequency_df$Year), max(year_method_frequency_df$Year), by = 2),
+                     labels = seq(min(year_method_frequency_df$Year), max(year_method_frequency_df$Year), by = 2)) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
 ```
 
+J'ai choisi d'utiliser un diagramme à barre empilée pour répondre à cette question. Ce type de graphique permettant une interprétation efficace et rapide d'une variable quantitative (le nombre d'exoplanètes découvertes) sur une période de temps (chaque année). J'ai choisi de colorer chaque bloc avec la méthode de découverte afin d'avoir rapidement un apercu de l'éfficacité des méthodes et de leurs popularité au fil du temps de l'efficacité des méthodes et de leurs popularités au fil du temps.
+
+Ici on remarque deux années importantes, 2014 et 2016, visiblement ces deux années ont été très riches en découvertes d'exoplanètes. Ces pics sont liés aux recherches du satellite Kepler lancées en 2009 et qui a eu pour mission jusqu'en 2018 de chercher des exoplanètes et notamment des planètes plus ou moins habitable. Après des recherches les pics en 2014 et en 2016 s'expliquent par des conditions d'observations très favorables. au cours de ces 2 années Kepler a eu la chance de pouvoir faire des observations à long terme sur des zones ciblées de notre univers.
+
+La représentation est plutôt intéressante, néanmoins on peut noter qu'il est difficile de lire précisément le nombre de planètes découvertes dans les petites barres à cause des 2 années aberrantes. On peut aussi noter que le graphique ne commence pas en 1989 mais plutôt en 1995, après analyse des données une exoplanète a bien été découverte en 1989, néanmoins ce nombre étant trop petit par rapport aux autres années on ne peut pas voir de barre sur le graphique
+
+Afin de mettre en exergue l'efficacité de Kepler depuis sa mise en service j'ai choisi de faire ce second petit graphique afin que le nombre d'exoplanètes découvertes par année et par satelittes (en prenant seulement les 5 premiers par ordre de découverte car sinon la légende avait trop de valeurs).
+
+```{r}
+# Sous tableau
+subset_observatoire <- subset(data, select = c("Discovery.Year", "Discovery.Facility"))
+
+# Ajout de fréquences par observatoire
+observatoire_frequency <- table(subset_observatoire$Discovery.Facility)
+top_observatoires <- names(sort(observatoire_frequency, decreasing = TRUE)[1:5])
+
+# Filtrage des données pour inclure uniquement les observatoires les plus fréquents
+filtered_data <- subset(subset_observatoire, subset_observatoire$Discovery.Facility %in% top_observatoires)
+
+# Conversion en data frame
+observatoire_year_frequency_df <- as.data.frame.table(table(filtered_data$Discovery.Year, filtered_data$Discovery.Facility))
+observatoire_year_frequency_df$Var1 <- as.integer(as.character(observatoire_year_frequency_df$Var1))
+
+# Graphique
+ggplot(filtered_data, aes(x = Discovery.Year, fill = Discovery.Facility)) +
+  geom_bar() +
+  labs(title = "Nombre d'exoplanètes découvertes par année et par observatoire",
+       x = "Année",
+       y = "Fréquence",
+       fill = "Observatoire") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  guides(fill = guide_legend(title = "Observatoires"))
+
+```
+
+Avec cette représentation on se rend bien compte de l'efficacité de Kepler sur ses années de mise en service, on remarque aussi K2 visiblement efficace à partir de 2015.
+
 ### **Quels sont les observatoires qui découvrent le plus d'exoplanètes ?**
+
+**Population:** L'ensemble des exoplanètes de l'univers
+
+**Echantillon:** Les 4575 exoplanètes presentes dans le dataset
+
+**Variable:**
+
+-   Le nombre d'éxoplanètes découvertes
+
+-   L'observatoire / satellite qui les a découvertes
+
+**Modalités**
+
+-   Le nombre de planète découvertes =\> variable quantitative nombre entre 0 et **≈** 1600
+
+-   Observatoire =\> variable qualitative, nom de l'observatoire
 
 ```{r, out.width="100%"}
 
@@ -65,24 +154,76 @@ ggplot(year_method_frequency_df, aes(area = Frequency, fill = Frequency, label =
 
 ```
 
+Pour cette question je voulais avoir une représentation visuelle efficace des observatoire le plus efficace. J'aurais pu utiliser un diagramme en camembert mais je souhaitais apprendre à manier un diagramme en "tree map" afin de voir si le rendu était visuellement intéressant. Ici on utilise la taille des rectangles et les couleurs pour connaitre le nombre d'exoplanètes découvertes.
+
+On remarque toute de suite en lisant le graphique que c'est bien Kepler qui a découvert le plus d'exoplanètes, visiblement environ 2000.
+
+Cette représentation est pratique pour rapidement savoir quel observatoire ont découvert le plus d'exoplanètes mais il est difficile d'avoir précisément une idée du nombre exact. Dans ce type de graphique on peut aussi s'apercevoir que la quantité est représenté à la fois par la taille des boîtes et leurs couleurs, cette information doublée n'est pas très pertinente.
+
 ### **Y a-t-il un lien entre la masse stélaire et le rayon des exoplanètes?**
 
-```{r, out.width="100%"}
+**Population:** L'ensemble des exoplanètes de l'univers
+
+**Echantillon:** Les 4575 exoplanètes presentes dans le dataset
+
+**Variable:**
+
+-   La masse stélaire des exoplanètes
+
+-   Le rayon des étoiles
+
+-   leurs température d'équilibre
+
+**Modalités**
+
+-   La masse stélaire des exoplanètes =\> quantitative nombre
+
+-   Le rayon des étoiles =\> quantitative nombre entre 0 et 7
+
+-   leurs température d'équilibre =\> quantitative nombre entre 0 et 5000
+
+```{r, out.width="100%", warning=OFF}
 
 # Subset data and remove rows with null values
-data
-subset_3 <- subset(data, select = c("Stellar.Mass", "Equilibrium.Temperature", "Stellar.Surface.Gravity"))
+subset_3 <- subset(data, select = c("Stellar.Mass", "Stellar.Radius", "Equilibrium.Temperature"))
 subset_3 <- subset_3[complete.cases(subset_3),]
-subset_3
-ggplot(subset_3, aes(x = Stellar.Mass, y = Equilibrium.Temperature, color = Stellar.Surface.Gravity)) + 
-  geom_point() +
+
+ggplot(subset_3, aes(x = Stellar.Mass, y = Stellar.Radius, color = Equilibrium.Temperature)) + 
+  geom_point(size = 1.5) +
   geom_smooth(method = "lm", se = FALSE) +
-   labs(x = "Mass", y = "Equilibrium Temperature")
+  labs(x = "Masse", y = "Rayon", color = "Température d'équilibre") +
+  scale_color_gradient(low = "blue", high = "red", limits = c(0, 5000),
+                       breaks = c(0, 1000, 2000, 3000, 4000),
+                         labels = c("0", "1000", "2000", "3000", "4000"))
 
 
 ```
 
+Ce graphique permet de voir le lien entre la masse des exoplanètes et leurs rayons. Le but était de pouvoir déterminer s'il y a un bien un lien entre ces deux variables. Pour essayer de déterminer un lien entre deux variables il me semblait pertinent de faire un graphique en nuage de points afin de mieux pouvoir observer la répartition de ceux-ci. Ce type de graphique permet aussi d'afficher une régression linéaire pour mettre encore plus en évidence un potentiel lien entre les données. Il me semblait aussi pertinent d'essayer de voir si ces deux variables pouvaient aussi avoir un lien avec la température d'équilibre des exoplanètes, c'est pour cela que j'ai décidé de mapper la température à la couleur des points.
+
+Ici le graphique semble pertinent, en effet on peut bien constater un lien entre la masse et le rayon des exoplanètes. En règle générale il est visible que plus la masse des exoplanètes est importante plus leur rayon est important, la régression linéaire nous permet de confirmer cette affirmation, celle-ci étant croissante. On peut aussi noter qu'en règle générale plus ces deux variables augmentent plus la température d'équilibre augmente elle aussi.
+
 ### Quelle est la relation entre l'année de découverte et la distance des exoplanètes, et comment varie-t-elle en fonction de la méthode de découverte utilisée ?
+
+**Population:** L'ensemble des exoplanètes de l'univers
+
+**Echantillon:** Les 4575 exoplanètes presentes dans le dataset
+
+**Variable:**
+
+-   La masse stélaire des exoplanètes
+
+-   Le rayon des étoiles
+
+-   leurs température d'équilibre
+
+**Modalités**
+
+-   La masse stélaire des exoplanètes =\> quantitative nombre
+
+-   Le rayon des étoiles =\> quantitative nombre entre 0 et 7
+
+-   leurs température d'équilibre =\> quantitative nombre entre 0 et 5000
 
 ```{r, out.width="100%"}
 
@@ -91,8 +232,7 @@ subset_3 <- subset(data, select = c("Discovery.Year", "Distance", "Discovery.Met
 subset_3 <- subset_3[complete.cases(subset_3),]
 subset_3
 ggplot(subset_3, aes(x = Discovery.Year, y = Distance, color = Discovery.Method)) + 
-  geom_point() +
-  scale_color_discrete(name = "Discovery Method") +
-  labs(x = "Discovery Year", y = "Distance")
-
+  geom_boxplot() +
+  scale_color_discrete(name = "DiscoveryMéthode de découverte") +
+  labs(x = "Année", y = "Distance", fill = "Méthode de découverte")
 ```
