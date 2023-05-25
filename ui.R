@@ -29,16 +29,6 @@ chart1 <- fluidRow(
         sep = "",
         animate = TRUE
       ),
-      div(
-        checkboxGroupInput(
-          "method",
-          label = h3("Méthode de découverte"),
-          choices = sort(unique(data$Discovery.Method)),
-          selected = sort(unique(data$Discovery.Method))
-        ),
-        style = "margin: 0px 20px;"
-      ),
-      cellWidths = c("70%", "30%"),
     ),
     width = 12
   )
