@@ -53,6 +53,7 @@ chart2 <- fluidRow(
   ),
 )
 
+# Chart 3
 chart3 <- fluidRow(
   h1("Y a-t-il un lien entre la masse stélaire et le rayon des exoplanètes?"),
   box(plotOutput("plot3"), width = 12),
@@ -96,13 +97,27 @@ chart3 <- fluidRow(
 )
 
 
+# CHART 4
+chart4 <- fluidRow(
+  h1("Quels sont les observatoires qui découvrent le plus d'exoplanètes ?"),
+  box(plotOutput("plot4"), width = 12),
+  
+  box(
+    checkboxGroupInput("checkboxes", "Select options:",
+                       choices = c("Disk Kinematics", "Eclipse Timing Variations", "Imaging", "Microlensing", "Orbital Brightness Modulation", "Pulsar Timing",  "Radial Velocity", "Transit Timing Variations"),
+                       selected = c("Disk Kinematics", "Eclipse Timing Variations", "Imaging", "Microlensing", "Orbital Brightness Modulation", "Pulsar Timing", "Radial Velocity",  "Transit Timing Variations")),
+    width = 12
+  ),
+)
+
 # SIDEBAR
 sidebar <- dashboardSidebar(
   tags$style(".sidebar-menu li a {font-size: 1.2em;}"),
   sidebarMenu(
     menuItem("Number / year", tabName = "chart1", icon = icon("chart-column")),
-    menuItem("Discover Facility", tabName = "chart2", icon = icon("chart-simple")),
-    menuItem("Stellar mass and radius", tabName = "chart3", icon = icon("chart-column"))
+    menuItem("Discover Facility", tabName = "chart2", icon = icon("chart-column")),
+    menuItem("Stellar mass and radius", tabName = "chart3", icon = icon("chart-column")),
+    menuItem("Method / distance", tabName = "chart4", icon = icon("chart-column"))
   )
 )
 
@@ -114,7 +129,9 @@ body <- dashboardBody(
     tabItem(tabName = "chart2",
             chart2),
     tabItem(tabName = "chart3",
-            chart3)
+            chart3),
+    tabItem(tabName = "chart4",
+            chart4)
   )
 )
 

@@ -77,4 +77,25 @@ function(input, output, session) {
                            breaks = c(0, 1000, 2000, 3000, 4000),
                            labels = c("0", "1000", "2000", "3000", "4000"))
   })
+  
+  
+  
+  output$plot4 <- renderPlot({
+    
+    # Subset data and remove rows with null values
+    subset_3 <- subset(data, select = c("Discovery.Year", "Distance", "Discovery.Method"))
+    subset_3 <- subset_3[complete.cases(subset_3),]
+    
+    # Filter data based on selected options
+    filtered_data <- subset_3[subset_3$Discovery.Method %in% input$checkboxes, ]
+    
+    ggplot(filtered_data, aes(y = Distance, color = Discovery.Method)) + 
+      geom_boxplot() +
+      scale_color_discrete(name = "Méthode de découverte") +
+      labs( y = "Distance", fill = "Méthode de découverte") +
+      theme(axis.title.x=element_blank(),
+            axis.text.x=element_blank(),
+            axis.ticks.x=element_blank())
+  })
+  
 }

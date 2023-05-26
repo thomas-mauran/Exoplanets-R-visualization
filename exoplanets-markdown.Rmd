@@ -1,19 +1,16 @@
 ---
-title: "Exoplanets"
+title: "Exoplanets dataviz"
 author: "Thomas Mauran"
-date: "2023-04-26"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=FALSE, message=FALSE, echo=FALSE, warning=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Exoplanet dataviz {#sec-tp-1 style="text-align: center"}
-
-::: {align="center"}
-<img src="images/exoplanet.png" alt="thumbnail" width="453"/>
-:::
+<center>![thumbnail](images/exoplanet.png){width="200"}</center>
 
 ## Les données
 
@@ -23,7 +20,7 @@ J'ai choisi de prendre ce dataset car l'espace est un sujet qui me passionne et 
 
 ##### Load des données
 
-```{r}
+```{r , echo=FALSE, warning=FALSE, message=FALSE}
 library(here)
 library(ggplot2)
 library(dplyr)
@@ -49,13 +46,13 @@ data <- read.csv(file = here("data.csv"))
 
 **Modalités**
 
--   Le nombre de planète découvertes =\> nombre entre 0 et **≈** 1600
+-   Le nombre de planète découvertes =\> nombre entre 0 et environ 1600
 
 -   année de découverte =\> Nombre entre 1989 et 2021
 
 -   Méthode =\> variable qualitative, méthode de découverte
 
-```{r, out.width="100%"}
+```{r, out.width="100%", echo=FALSE, warning=FALSE}
 # Sous tableau
 subset_year_type <- subset(data, select = c("Discovery.Year", "Discovery.Method"))
 
@@ -88,7 +85,7 @@ La représentation est plutôt intéressante, néanmoins on peut noter qu'il est
 
 Afin de mettre en exergue l'efficacité de Kepler depuis sa mise en service j'ai choisi de faire ce second petit graphique afin que le nombre d'exoplanètes découvertes par année et par satelittes (en prenant seulement les 5 premiers par ordre de découverte car sinon la légende avait trop de valeurs).
 
-```{r}
+```{r, echo=FALSE, warning=FALSE}
 # Sous tableau
 subset_observatoire <- subset(data, select = c("Discovery.Year", "Discovery.Facility"))
 
@@ -131,14 +128,15 @@ Avec cette représentation on se rend bien compte de l'efficacité de Kepler sur
 
 **Modalités**
 
--   Le nombre de planète découvertes =\> variable quantitative nombre entre 0 et **≈** 1600
+-   Le nombre de planète découvertes =\> variable quantitative nombre entre 0 et environ 1600
 
 -   Observatoire =\> variable qualitative, nom de l'observatoire
 
-```{r, out.width="100%"}
+```{r, out.width="100%", echo=FALSE, warning=FALSE}
 
 # Sous tableau
 subset_observatoire <- subset(data, select = c("Discovery.Facility"))
+
 # Ajout de fréquences
 observatoire_frequency <- table(subset_observatoire$Discovery.Facility)
 # Conversion en data frame
@@ -158,13 +156,13 @@ Pour cette question je voulais avoir une représentation visuelle efficace des o
 
 On remarque toute de suite en lisant le graphique que c'est bien Kepler qui a découvert le plus d'exoplanètes, visiblement environ 2000.
 
-Cette représentation est pratique pour rapidement savoir quel observatoire ont découvert le plus d'exoplanètes mais il est difficile d'avoir précisément une idée du nombre exact. Dans ce type de graphique on peut aussi s'apercevoir que la quantité est représenté à la fois par la taille des boîtes et leurs couleurs, cette information doublée n'est pas très pertinente.
+Cette représentation est pratique pour rapidement savoir quel observatoire ont découvert le plus d'exoplanètes mais il est difficile d'avoir précisément une idée du nombre exact. Dans ce type de graphique on peut aussi s'apercevoir que la quantité est représenté à la fois par la taille des boîtes et leurs couleurs, cette information doublée n'est pas très pertinente. Il est aussi important de noter que ce type de graphique tronque les noms trop long ce qui n'est pas très optimal pour de la lecture de graphique.
 
 ### **Y a-t-il un lien entre la masse stélaire et le rayon des exoplanètes?**
 
 **Population:** L'ensemble des exoplanètes de l'univers
 
-**Echantillon:** Les 4575 exoplanètes presentes dans le dataset
+**Echantillon:** Les 888 exoplanètes presentes dans le dataset avec les catégories mass radius et equilibrium temperature
 
 **Variable:**
 
@@ -182,7 +180,7 @@ Cette représentation est pratique pour rapidement savoir quel observatoire ont 
 
 -   leurs température d'équilibre =\> quantitative nombre entre 0 et 5000
 
-```{r, out.width="100%", warning=OFF}
+```{r, out.width="100%", echo=FALSE, warning=FALSE}
 
 # Subset data and remove rows with null values
 subset_3 <- subset(data, select = c("Stellar.Mass", "Stellar.Radius", "Equilibrium.Temperature"))
@@ -203,36 +201,43 @@ Ce graphique permet de voir le lien entre la masse des exoplanètes et leurs ray
 
 Ici le graphique semble pertinent, en effet on peut bien constater un lien entre la masse et le rayon des exoplanètes. En règle générale il est visible que plus la masse des exoplanètes est importante plus leur rayon est important, la régression linéaire nous permet de confirmer cette affirmation, celle-ci étant croissante. On peut aussi noter qu'en règle générale plus ces deux variables augmentent plus la température d'équilibre augmente elle aussi.
 
-### Quelle est la relation entre l'année de découverte et la distance des exoplanètes, et comment varie-t-elle en fonction de la méthode de découverte utilisée ?
+### Quelles sont les méthodes qui permettent de trouver les exoplanètes les plus éloignées
 
 **Population:** L'ensemble des exoplanètes de l'univers
 
-**Echantillon:** Les 4575 exoplanètes presentes dans le dataset
+**Echantillon:** Les 4,471 exoplanètes presentes dans le dataset avec les catégories year, distance et method
 
 **Variable:**
 
--   La masse stélaire des exoplanètes
+-   L'année de découverte
 
--   Le rayon des étoiles
+-   La distance depuis la terre
 
--   leurs température d'équilibre
+-   La méthode de découverte
 
 **Modalités**
 
--   La masse stélaire des exoplanètes =\> quantitative nombre
+-   année de découverte =\> Nombre entre 1989 et 2021
 
--   Le rayon des étoiles =\> quantitative nombre entre 0 et 7
+-   distance =\> variable quantitative nombre
 
--   leurs température d'équilibre =\> quantitative nombre entre 0 et 5000
+-   Méthode =\> variable qualitative, méthode de découverte
 
-```{r, out.width="100%"}
+```{r, out.width="100%", echo=FALSE, warning=FALSE}
 
 # Subset data and remove rows with null values
 subset_3 <- subset(data, select = c("Discovery.Year", "Distance", "Discovery.Method"))
 subset_3 <- subset_3[complete.cases(subset_3),]
-subset_3
-ggplot(subset_3, aes(x = Discovery.Year, y = Distance, color = Discovery.Method)) + 
+
+ggplot(subset_3, aes(y = Distance, color = Discovery.Method)) + 
   geom_boxplot() +
   scale_color_discrete(name = "DiscoveryMéthode de découverte") +
-  labs(x = "Année", y = "Distance", fill = "Méthode de découverte")
+  labs( y = "Distance", fill = "Méthode de découverte") +
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
 ```
+
+Ici le but était de voir si une méthode permettait de découvrir des exoplanètes plus éloignées que d'autres. Dans ce cas prendre un graphique en moustache permet de comparer les moyennes les quartiles et les valeurs extremes, cette représentation permet une lecture efficace pour ce type de question
+
+Ce graphique nous permet de nous rendre que c'est la microlésion qui permet de trouver les exoplanètes les plus lointaines, on peut aussi noter que la méthode transit contient certaines valeurs aberrantes qui ont permis de découvrir des exoplanètes très lointaines mais beaucoup plus rarement que les méthodes de microlensing
