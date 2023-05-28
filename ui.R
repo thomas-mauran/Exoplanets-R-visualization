@@ -110,10 +110,17 @@ chart4 <- fluidRow(
   ),
 )
 
+
+# Rapport
+rapport <- fluidRow(
+  tags$object(style="height:600px; width:100%", data="./exoplanet-markdown.pdf", type="application/pdf")
+)
+
 # SIDEBAR
 sidebar <- dashboardSidebar(
   tags$style(".sidebar-menu li a {font-size: 1.2em;}"),
   sidebarMenu(
+    menuItem("Rapport", tabName = "rapport", icon = icon("chart-column")),
     menuItem("Number / year", tabName = "chart1", icon = icon("chart-column")),
     menuItem("Discover Facility", tabName = "chart2", icon = icon("chart-column")),
     menuItem("Stellar mass and radius", tabName = "chart3", icon = icon("chart-column")),
@@ -121,9 +128,15 @@ sidebar <- dashboardSidebar(
   )
 )
 
+
 # BODY
 body <- dashboardBody(
   tabItems(
+    tabItem(tabName = "rapport",
+            
+              tags$iframe(style = "height: 100vh; width:100%", src="exoplanets-markdown.pdf")
+            
+    ),
     tabItem(tabName = "chart1",
             chart1),
     tabItem(tabName = "chart2",
