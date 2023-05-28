@@ -1,0 +1,13 @@
+name: Exoplanets-R-visualization
+title: Exoplanets-R-visualization
+username:
+account: thomas-mauran
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 9201885
+bundleId: 7273397
+url: https://thomas-mauran.shinyapps.io/Exoplanets-R-visualization/
+when: 1685273568.31434
+lastSyncTime: 1685273568.31435
+asMultiple: FALSE
+asStatic: FALSE
